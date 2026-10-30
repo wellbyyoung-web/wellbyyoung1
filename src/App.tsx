@@ -20,7 +20,15 @@ export default function App() {
   const [externalLinks, setExternalLinks] = useState<ExternalLinks>(() => {
     try {
       const saved = localStorage.getItem('wellbyyoung_links');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Seamlessly migrate to official blog if previous or empty
+        if (!parsed.naverBlog || parsed.naverBlog.includes('wellbyyoung') || parsed.naverBlog.includes('wandokong_lab')) {
+          parsed.naverBlog = 'https://blog.naver.com/wellby0';
+          localStorage.setItem('wellbyyoung_links', JSON.stringify(parsed));
+        }
+        return parsed;
+      }
     } catch {
       // fallback
     }

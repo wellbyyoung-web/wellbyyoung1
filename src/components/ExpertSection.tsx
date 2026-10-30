@@ -1,11 +1,14 @@
 import { useState, useRef } from 'react';
 import { Award, BookOpen, Clock, Sparkles, Upload, RotateCcw } from 'lucide-react';
+import { BRAND_ASSETS } from '../data/brandContent';
 
 export function ExpertSection() {
   const [customPhoto, setCustomPhoto] = useState<string | null>(() => {
     return localStorage.getItem('wellbyyoung_founder_photo') || null;
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const currentPhoto = customPhoto || BRAND_ASSETS.founderImage;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -77,65 +80,54 @@ export function ExpertSection() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           {/* Left Column: Elegant Editorial Portrait Area */}
           <div className="lg:col-span-5 flex flex-col items-center">
-            <div className="relative w-full max-w-sm aspect-[4/5] rounded-lg border border-[#E3DED4] bg-[#F7F5F0] overflow-hidden flex flex-col items-center justify-center p-8 text-center shadow-[0_4px_24px_rgba(0,0,0,0.02)] group">
-              {customPhoto ? (
-                <div className="absolute inset-0">
-                  <img
-                    src={customPhoto}
-                    alt="박혜영 대표"
-                    className="w-full h-full object-cover object-center"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1B1E1C]/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center p-4">
-                    <button
-                      onClick={handleResetPhoto}
-                      className="px-3 py-1.5 bg-white/90 hover:bg-white text-xs text-[#1B1E1C] rounded font-medium shadow-xs flex items-center gap-1.5"
-                    >
-                      <RotateCcw className="w-3.5 h-3.5" />
-                      기본 영역으로 복원
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {/* Refined Minimalist Graphic Monogram */}
-                  <div className="w-20 h-20 mx-auto rounded-full border border-[#D3DDD3] bg-[#E8ECE8]/60 flex items-center justify-center text-[#4E6351] font-serif-brand text-2xl font-semibold tracking-wider">
-                    HYP
-                  </div>
-                  <div>
-                    <div className="font-serif-brand text-xs tracking-widest uppercase text-[#767E77]">
-                      Profile Photo Area
-                    </div>
-                    <div className="mt-1 text-sm font-medium text-[#2C302D]">
-                      박혜영 대표 프로필 사진 영역
-                    </div>
-                    <p className="mt-1.5 text-xs text-[#767E77] max-w-[220px] mx-auto leading-relaxed font-light">
-                      실제 인물 사진은 등록 시 반영됩니다.
-                    </p>
-                  </div>
+            <div className="relative w-full max-w-sm aspect-[3/4] rounded-lg border border-[#E3DED4] bg-[#F7F5F0] overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.04)] group">
+              {/* Founder Image */}
+              <img
+                src={currentPhoto}
+                alt="박혜영 대표 - 영양사 / Personal Health Designer"
+                referrerPolicy="no-referrer"
+                onError={(e) => {
+                  if (e.currentTarget.src !== window.location.origin + BRAND_ASSETS.founderFallback) {
+                    e.currentTarget.src = BRAND_ASSETS.founderFallback;
+                  }
+                }}
+                className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-[1.02]"
+              />
 
-                  {/* Photo Upload Input & Trigger */}
-                  <div className="pt-2">
+              {/* Subtle hover overlay for changing/resetting photo */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1B1E1C]/75 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4 z-10">
+                <div className="flex items-center justify-center gap-2 mb-12">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-3 py-1.5 bg-white/95 hover:bg-white text-xs text-[#1B1E1C] rounded font-medium shadow-xs flex items-center gap-1.5 transition-colors"
+                  >
+                    <Upload className="w-3.5 h-3.5 text-[#4E6351]" />
+                    <span>사진 변경</span>
+                  </button>
+                  {customPhoto && (
                     <button
                       type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#4E6351] bg-[#FAF8F5] hover:bg-white border border-[#D3DDD3] rounded transition-colors shadow-2xs"
+                      onClick={handleResetPhoto}
+                      className="px-3 py-1.5 bg-[#2C302D]/90 hover:bg-[#2C302D] text-xs text-white rounded font-medium shadow-xs flex items-center gap-1.5 transition-colors"
                     >
-                      <Upload className="w-3.5 h-3.5" />
-                      <span>실제 사진 등록/미리보기</span>
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      <span>기본 사진으로</span>
                     </button>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      className="hidden"
-                    />
-                  </div>
+                  )}
                 </div>
-              )}
+              </div>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
+              />
 
               {/* Founder Tag Strip */}
-              <div className="absolute bottom-4 left-4 right-4 bg-[#FAF8F5]/90 backdrop-blur-xs border border-[#E3DED4] p-3 text-left rounded-sm">
+              <div className="absolute bottom-4 left-4 right-4 bg-[#FAF8F5]/95 backdrop-blur-sm border border-[#E3DED4] p-3 text-left rounded-sm shadow-sm z-20">
                 <div className="text-[11px] font-serif-brand tracking-widest uppercase text-[#627A65] font-semibold">
                   Personal Health Designer
                 </div>
@@ -146,7 +138,7 @@ export function ExpertSection() {
             </div>
 
             <p className="mt-3 text-[11px] text-[#767E77] text-center max-w-xs font-light">
-              * 임의의 AI 인물 사진을 사용하지 않고, 신뢰할 수 있는 실제 프로필 영역으로 운영됩니다.
+              * 웰바이영 대표 박혜영의 공식 프로필 사진입니다.
             </p>
           </div>
 
