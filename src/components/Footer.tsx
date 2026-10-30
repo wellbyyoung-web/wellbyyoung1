@@ -169,7 +169,10 @@ export function Footer({
             <div>
               <span className="font-medium text-[#59605A]">사업장 주소:</span> 추후 공지 예정
               <span className="mx-2">·</span>
-              <span className="font-medium text-[#59605A]">통신판매업신고:</span> 신고 준비 중
+              <span className="font-medium text-[#59605A]">고객문의:</span>{' '}
+              <a href="mailto:wellbyyoung@gmail.com" className="hover:text-[#1B1E1C] underline font-medium text-[#4E6351]">
+                wellbyyoung@gmail.com
+              </a>
             </div>
           </div>
 

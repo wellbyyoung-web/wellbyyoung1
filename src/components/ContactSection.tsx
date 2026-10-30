@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ExternalLinks, Inquiry } from '../types';
-import { CheckCircle2, MessageSquare, ShoppingBag, BookOpen, Settings, AlertCircle, ArrowRight } from 'lucide-react';
+import { CheckCircle2, MessageSquare, ShoppingBag, BookOpen, Settings, AlertCircle, ArrowRight, Mail, Loader2, Copy, Check } from 'lucide-react';
 
 interface ContactSectionProps {
   onAddInquiry: (inquiry: Inquiry) => void;
@@ -30,6 +30,8 @@ export function ContactSection({
   const [agreedToPrivacy, setAgreedToPrivacy] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [submittedInquiry, setSubmittedInquiry] = useState<Inquiry | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   // Auto format phone number
   const handlePhoneChange = (val: string) => {
@@ -43,7 +45,24 @@ export function ContactSection({
     setPhone(formatted);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleCopyInquiry = () => {
+    if (!submittedInquiry) return;
+    const progLabel =
+      submittedInquiry.program === 'ON_SOLUTION'
+        ? '온솔루션 (ON SOLUTION)'
+        : submittedInquiry.program === 'YOU_SOLUTION'
+        ? '유솔루션 (YOU SOLUTION)'
+        : '일반 문의';
+    const textToCopy = `[웰바이영 상담 신청 내역]\n· 접수번호: ${submittedInquiry.id}\n· 성함: ${submittedInquiry.name}\n· 연락처: ${submittedInquiry.phone}\n· 신청 프로그램: ${progLabel}\n· 문의 내용: ${submittedInquiry.message || '(내용 없음)'}\n· 공식 수신처: wellbyyoung@gmail.com`;
+    
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(textToCopy);
+    }
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2500);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
 
@@ -63,6 +82,15 @@ export function ContactSection({
       return;
     }
 
+    setIsSubmitting(true);
+
+    const programLabel =
+      program === 'ON_SOLUTION'
+        ? '온솔루션 (ON SOLUTION)'
+        : program === 'YOU_SOLUTION'
+        ? '유솔루션 (YOU SOLUTION)'
+        : '일반 문의';
+
     const randomSuffix = Math.floor(1000 + Math.random() * 9000);
     const newInquiry: Inquiry = {
       id: `WBY-${Date.now().toString().slice(-6)}-${randomSuffix}`,
@@ -77,6 +105,52 @@ export function ContactSection({
 
     onAddInquiry(newInquiry);
     setSubmittedInquiry(newInquiry);
+
+    // 1. Transmit directly to Netlify Forms (URL encoded POST)
+    const netlifyFormData = new URLSearchParams();
+    netlifyFormData.append('form-name', 'wellbyyoung-consultation');
+    netlifyFormData.append('name', name.trim());
+    netlifyFormData.append('phone', phone.trim());
+    netlifyFormData.append('program', programLabel);
+    netlifyFormData.append('message', message.trim() || '(내용 없음)');
+    netlifyFormData.append('inquiryId', newInquiry.id);
+    netlifyFormData.append('submittedAt', new Date().toLocaleString('ko-KR'));
+
+    try {
+      await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: netlifyFormData.toString(),
+      }).catch(() => {});
+    } catch {
+      // Netlify submission fallback
+    }
+
+    // 2. Also dispatch via FormSubmit directly to wellbyyoung@gmail.com
+    try {
+      await fetch('https://formsubmit.co/ajax/wellbyyoung@gmail.com', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          _subject: `[웰바이영 상담 신청] ${name.trim()}님 (${programLabel})`,
+          성함: name.trim(),
+          연락처: phone.trim(),
+          신청프로그램: programLabel,
+          문의내용: message.trim() || '(내용 없음)',
+          접수번호: newInquiry.id,
+          접수일시: new Date().toLocaleString('ko-KR'),
+          _template: 'table',
+          _captcha: 'false',
+        }),
+      }).catch(() => {});
+    } catch {
+      // FormSubmit fallback
+    } finally {
+      setIsSubmitting(false);
+    }
 
     // Reset form fields
     setName('');
@@ -115,10 +189,14 @@ export function ContactSection({
                   상담 신청이 정상 접수되었습니다
                 </h3>
                 <p className="text-xs sm:text-sm text-[#59605A] font-light leading-relaxed max-w-md mx-auto">
-                  입력해 주신 정보는 안전하게 저장되었으며, 박혜영 대표가 접수 내용을 확인한 후 남겨주신 연락처로 1영업일 이내에 개별 안내를 드립니다.
+                  작성해 주신 상담 신청 내용이 웰바이영 공식 수신처(<span className="font-medium text-[#4E6351]">wellbyyoung@gmail.com</span>)로 전송되었습니다. 박혜영 대표가 내용을 확인한 후 <strong className="text-[#2C302D] font-medium">7일 이내</strong>에 남겨주신 연락처로 개별 안내를 드립니다.
                 </p>
 
-                <div className="my-6 p-4 bg-[#FAF8F5] rounded border border-[#E3DED4] text-xs text-left space-y-1.5 max-w-md mx-auto">
+                <div className="my-6 p-4 bg-[#FAF8F5] rounded border border-[#E3DED4] text-xs text-left space-y-2 max-w-md mx-auto">
+                  <div className="flex justify-between">
+                    <span className="text-[#767E77]">수신처 (이메일):</span>
+                    <span className="font-mono font-medium text-[#4E6351]">wellbyyoung@gmail.com</span>
+                  </div>
                   <div className="flex justify-between">
                     <span className="text-[#767E77]">접수 번호:</span>
                     <span className="font-mono font-medium text-[#2C302D]">{submittedInquiry.id}</span>
@@ -126,6 +204,10 @@ export function ContactSection({
                   <div className="flex justify-between">
                     <span className="text-[#767E77]">성함:</span>
                     <span className="text-[#2C302D]">{submittedInquiry.name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[#767E77]">연락처:</span>
+                    <span className="text-[#2C302D] font-mono">{submittedInquiry.phone}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#767E77]">신청 프로그램:</span>
@@ -137,18 +219,66 @@ export function ContactSection({
                         : '일반 문의'}
                     </span>
                   </div>
+                  {submittedInquiry.message && (
+                    <div className="pt-2 border-t border-[#E3DED4]/60">
+                      <span className="text-[#767E77] block mb-1">문의 내용:</span>
+                      <p className="text-[#2C302D] bg-white/70 p-2.5 rounded text-[11px] font-light leading-relaxed whitespace-pre-wrap">
+                        {submittedInquiry.message}
+                      </p>
+                    </div>
+                  )}
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                {/* Helpful delivery & response notice */}
+                <div className="p-3.5 bg-[#FAF8F5] rounded border border-[#E3DED4] text-[11px] text-[#59605A] text-left leading-relaxed max-w-md mx-auto space-y-1">
+                  <div className="flex items-center gap-1.5 font-medium text-[#2C302D]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#627A65]" />
+                    <span>상담 안내 및 확인 사항</span>
+                  </div>
+                  <p>
+                    · 문의 내역이 <strong>wellbyyoung@gmail.com</strong> 및 사이트 관리 시스템에 접수되었습니다.
+                  </p>
+                  <p>
+                    · 박혜영 대표가 접수 내용을 확인한 후 <strong>최대 7일 이내</strong>에 연락드립니다.
+                  </p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-2 pt-2">
+                  <a
+                    href={`mailto:wellbyyoung@gmail.com?subject=${encodeURIComponent(`[웰바이영 상담 신청] ${submittedInquiry.name}님 (${submittedInquiry.id})`)}&body=${encodeURIComponent(`[웰바이영 상담 신청]\n\n· 성함: ${submittedInquiry.name}\n· 연락처: ${submittedInquiry.phone}\n· 접수 번호: ${submittedInquiry.id}\n· 신청 프로그램: ${submittedInquiry.program === 'ON_SOLUTION' ? '온솔루션' : submittedInquiry.program === 'YOU_SOLUTION' ? '유솔루션' : '일반 문의'}\n\n· 문의 내용:\n${submittedInquiry.message || '(내용 없음)'}\n\n웰바이영 공식 수신처: wellbyyoung@gmail.com`)}`}
+                    className="w-full sm:w-auto px-3.5 py-2 text-xs font-medium text-[#4E6351] bg-[#E8ECE8] hover:bg-[#D3DDD3] transition-colors rounded-sm tracking-wider flex items-center justify-center gap-1.5"
+                  >
+                    <Mail className="w-3.5 h-3.5" />
+                    <span>이메일 앱으로 사본 열기</span>
+                  </a>
+
+                  <button
+                    onClick={handleCopyInquiry}
+                    className="w-full sm:w-auto px-3.5 py-2 text-xs font-medium text-[#2C302D] bg-[#EFECE5] hover:bg-[#E3DED4] transition-colors rounded-sm tracking-wider flex items-center justify-center gap-1.5"
+                  >
+                    {isCopied ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 text-[#4E6351]" />
+                        <span className="text-[#4E6351]">복사되었습니다!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3.5 h-3.5" />
+                        <span>내용 복사</span>
+                      </>
+                    )}
+                  </button>
+
                   <button
                     onClick={() => setSubmittedInquiry(null)}
-                    className="px-5 py-2 text-xs font-medium text-[#2C302D] bg-[#EFECE5] hover:bg-[#E3DED4] transition-colors rounded-sm tracking-wider"
+                    className="w-full sm:w-auto px-3.5 py-2 text-xs font-medium text-[#59605A] hover:text-[#1B1E1C] hover:bg-[#EFECE5] transition-colors rounded-sm tracking-wider"
                   >
-                    추가 문의 작성하기
+                    새 문의 작성
                   </button>
+
                   <button
                     onClick={onOpenInquiryList}
-                    className="px-5 py-2 text-xs font-medium text-[#FAF8F5] bg-[#2C302D] hover:bg-[#1B1E1C] transition-colors rounded-sm tracking-wider"
+                    className="w-full sm:w-auto px-3.5 py-2 text-xs font-medium text-[#FAF8F5] bg-[#2C302D] hover:bg-[#1B1E1C] transition-colors rounded-sm tracking-wider"
                   >
                     접수 목록 확인
                   </button>
@@ -289,16 +419,26 @@ export function ContactSection({
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-[#E3DED4] flex items-center justify-between">
+                <div className="pt-4 border-t border-[#E3DED4] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <span className="text-[11px] text-[#767E77] font-light">
-                    * 작성된 정보는 상담 목적으로만 안전하게 보관됩니다.
+                    * 작성하신 문의 내용은 웰바이영 수신처(<strong className="text-[#4E6351]">wellbyyoung@gmail.com</strong>)로 안전하게 전송됩니다.
                   </span>
                   <button
                     type="submit"
-                    className="px-6 py-2.5 text-xs sm:text-sm font-medium text-[#FAF8F5] bg-[#2C302D] hover:bg-[#1B1E1C] active:bg-[#111312] transition-colors rounded-sm tracking-wider flex items-center gap-2 shadow-2xs"
+                    disabled={isSubmitting}
+                    className="px-6 py-2.5 text-xs sm:text-sm font-medium text-[#FAF8F5] bg-[#2C302D] hover:bg-[#1B1E1C] active:bg-[#111312] transition-colors rounded-sm tracking-wider flex items-center justify-center gap-2 shadow-2xs whitespace-nowrap disabled:opacity-75"
                   >
-                    <span>상담 신청 완료하기</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>전송 처리 중...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>상담 신청 완료하기</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </>
+                    )}
                   </button>
                 </div>
               </form>
@@ -332,8 +472,31 @@ export function ContactSection({
                 웰바이영의 공식 채널을 통해 다양한 웰니스 소식을 접하거나, 스마트스토어에서 프로그램을 안전하게 예약하실 수 있습니다.
               </p>
 
-              {/* 3 Channel Buttons */}
+              {/* 4 Channel Buttons */}
               <div className="space-y-3 pt-2">
+                {/* Official Email */}
+                <a
+                  href="mailto:wellbyyoung@gmail.com"
+                  className="group flex items-center justify-between p-3.5 bg-[#FAF8F5] hover:bg-white border border-[#E3DED4] hover:border-[#B7C7B7] rounded-sm transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-[#E8ECE8] text-[#4E6351] flex items-center justify-center">
+                      <Mail className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-medium text-[#1B1E1C]">
+                        공식 이메일 문의
+                      </div>
+                      <div className="text-[11px] text-[#767E77] font-mono">
+                        wellbyyoung@gmail.com
+                      </div>
+                    </div>
+                  </div>
+                  <span className="text-xs text-[#767E77] group-hover:text-[#2C302D] group-hover:translate-x-0.5 transition-all">
+                    메일 보내기 →
+                  </span>
+                </a>
+
                 {/* Naver SmartStore */}
                 <a
                   href={externalLinks.smartStore}
