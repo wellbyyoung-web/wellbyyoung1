@@ -77,10 +77,11 @@ export function ExpertSection() {
         </div>
 
         {/* Content Split: Profile Frame & Editorial Credentials */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-          {/* Left Column: Elegant Editorial Portrait Area */}
-          <div className="lg:col-span-5 flex flex-col items-center">
-            <div className="relative w-full max-w-sm aspect-[3/4] rounded-lg border border-[#E3DED4] bg-[#F7F5F0] overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.04)] group">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start max-w-5xl mx-auto">
+          {/* Left Column: Compact 1/4 size Profile Card */}
+          <div className="lg:col-span-4 flex flex-col items-center text-center p-6 bg-[#F7F5F0] rounded-lg border border-[#E3DED4] shadow-xs">
+            {/* 1/4 size Compact Portrait Frame (approx. 150px wide vs previous 384px) */}
+            <div className="relative w-36 sm:w-40 aspect-[3/4] rounded-md border border-[#E3DED4] overflow-hidden shadow-xs bg-[#FAF8F5] group">
               {/* Founder Image */}
               <img
                 src={currentPhoto}
@@ -91,59 +92,56 @@ export function ExpertSection() {
                     e.currentTarget.src = BRAND_ASSETS.founderFallback;
                   }
                 }}
-                className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-[1.02]"
+                className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
               />
 
               {/* Subtle hover overlay for changing/resetting photo */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1B1E1C]/75 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4 z-10">
-                <div className="flex items-center justify-center gap-2 mb-12">
+              <div className="absolute inset-0 bg-[#1B1E1C]/65 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1.5 p-2 z-10">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="px-2.5 py-1 bg-white text-[11px] text-[#1B1E1C] rounded font-medium shadow-xs flex items-center gap-1 hover:bg-[#FAF8F5] transition-colors"
+                >
+                  <Upload className="w-3 h-3 text-[#4E6351]" />
+                  <span>사진 변경</span>
+                </button>
+                {customPhoto && (
                   <button
                     type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="px-3 py-1.5 bg-white/95 hover:bg-white text-xs text-[#1B1E1C] rounded font-medium shadow-xs flex items-center gap-1.5 transition-colors"
+                    onClick={handleResetPhoto}
+                    className="px-2.5 py-1 bg-[#2C302D] text-[11px] text-white rounded font-medium shadow-xs flex items-center gap-1 transition-colors"
                   >
-                    <Upload className="w-3.5 h-3.5 text-[#4E6351]" />
-                    <span>사진 변경</span>
+                    <RotateCcw className="w-3 h-3" />
+                    <span>초기화</span>
                   </button>
-                  {customPhoto && (
-                    <button
-                      type="button"
-                      onClick={handleResetPhoto}
-                      className="px-3 py-1.5 bg-[#2C302D]/90 hover:bg-[#2C302D] text-xs text-white rounded font-medium shadow-xs flex items-center gap-1.5 transition-colors"
-                    >
-                      <RotateCcw className="w-3.5 h-3.5" />
-                      <span>기본 사진으로</span>
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="hidden"
-              />
-
-              {/* Founder Tag Strip */}
-              <div className="absolute bottom-4 left-4 right-4 bg-[#FAF8F5]/95 backdrop-blur-sm border border-[#E3DED4] p-3 text-left rounded-sm shadow-sm z-20">
-                <div className="text-[11px] font-serif-brand tracking-widest uppercase text-[#627A65] font-semibold">
-                  Personal Health Designer
-                </div>
-                <div className="text-base font-medium text-[#1B1E1C]">
-                  박혜영 <span className="text-xs text-[#59605A] font-normal">대표 / 영양사</span>
-                </div>
+                )}
               </div>
             </div>
 
-            <p className="mt-3 text-[11px] text-[#767E77] text-center max-w-xs font-light">
-              * 웰바이영 대표 박혜영의 공식 프로필 사진입니다.
-            </p>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+
+            {/* Profile Info below photo */}
+            <div className="mt-4 space-y-1">
+              <div className="text-[11px] font-serif-brand tracking-widest uppercase text-[#627A65] font-semibold">
+                Personal Health Designer
+              </div>
+              <h3 className="text-base sm:text-lg font-medium text-[#1B1E1C]">
+                박혜영 <span className="text-xs text-[#59605A] font-normal">대표 / 영양사</span>
+              </h3>
+              <p className="text-[11px] text-[#767E77] font-light">
+                건강상담 및 영양교육 17년 경력
+              </p>
+            </div>
           </div>
 
           {/* Right Column: Narrative & Credentials List */}
-          <div className="lg:col-span-7 space-y-6">
+          <div className="lg:col-span-8 space-y-6">
             <div className="space-y-3 pb-6 border-b border-[#E3DED4]">
               <span className="text-xs tracking-widest uppercase font-serif-brand text-[#4E6351] font-semibold">
                 Expertise & Philosophy

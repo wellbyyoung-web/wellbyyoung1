@@ -21,7 +21,7 @@ export function VitalogySection() {
           </h2>
           <div className="w-12 h-[1.5px] bg-[#627A65] mx-auto my-6" />
           <blockquote className="font-serif-brand italic text-base sm:text-lg text-[#2C302D] leading-relaxed mb-4">
-            “웰바이영이 지향하는 바이탈로지(Vitalogy)는 단순히 오래 사는 것을 넘어, 지금 이 순간을 가장 건강하고 활력 있게 살아가는 방법을 찾아가는 여정입니다.”
+            “웰바이영이 지향하는 바이탈로지(Vitalogy)는 단순히 질환이 없는 상태를 넘어, 지금 이 순간을 가장 건강하고 활력 있게 살아가는 방법을 찾아가는 여정입니다.”
           </blockquote>
           <p className="text-xs sm:text-sm text-[#59605A] leading-relaxed font-light text-balance">
             몸의 작은 변화에도 귀 기울이고, 개인의 신체 균형과 영양, 생활습관을 종합적으로 이해하여 각자의 일상에 맞는 건강 해답을 제안합니다.
