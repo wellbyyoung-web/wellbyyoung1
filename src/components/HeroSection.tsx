@@ -52,6 +52,11 @@ export function HeroSection() {
               src={BRAND_ASSETS.heroImage}
               alt="웰바이영 - 일상의 활력을 설계하는 평온하고 자연스러운 공간"
               referrerPolicy="no-referrer"
+              onError={(e) => {
+                if (e.currentTarget.src !== window.location.origin + BRAND_ASSETS.heroFallback) {
+                  e.currentTarget.src = BRAND_ASSETS.heroFallback;
+                }
+              }}
               className="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-[1.02]"
             />
             {/* Soft Ambient Overlay for luxury editorial tone */}

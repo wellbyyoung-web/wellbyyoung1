@@ -108,6 +108,11 @@ export function ProgramsSection({
               src={BRAND_ASSETS.programImage}
               alt="아로마테라피 및 자연 웰니스"
               referrerPolicy="no-referrer"
+              onError={(e) => {
+                if (e.currentTarget.src !== window.location.origin + BRAND_ASSETS.programFallback) {
+                  e.currentTarget.src = BRAND_ASSETS.programFallback;
+                }
+              }}
               className="w-full h-full object-cover object-center"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#FAF8F5]/30 hidden md:block" />

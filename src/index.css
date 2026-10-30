@@ -27,16 +27,33 @@
   --color-charcoal-500: #767E77;
 }
 
+:root {
+  color-scheme: light;
+  supported-color-schemes: light;
+}
+
 html {
   scroll-behavior: smooth;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  color-scheme: light !important;
+  background-color: #FAF8F5 !important;
 }
 
 body {
   font-family: var(--font-sans);
-  background-color: #FAF8F5;
-  color: #242724;
+  background-color: #FAF8F5 !important;
+  color: #242724 !important;
+  color-scheme: light !important;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Lock light color-scheme to prevent Android/Samsung Internet forced dark-mode inversion */
+@media (prefers-color-scheme: dark) {
+  :root, html, body {
+    color-scheme: light !important;
+    background-color: #FAF8F5 !important;
+    color: #242724 !important;
+  }
 }
 
 .font-serif-brand {

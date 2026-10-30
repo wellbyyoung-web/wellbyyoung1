@@ -119,6 +119,11 @@ export function VitalogySection() {
                 src={BRAND_ASSETS.vitalogyImage}
                 alt="바이탈로지 라이프스타일 웰니스 감성"
                 referrerPolicy="no-referrer"
+                onError={(e) => {
+                  if (e.currentTarget.src !== window.location.origin + BRAND_ASSETS.vitalogyFallback) {
+                    e.currentTarget.src = BRAND_ASSETS.vitalogyFallback;
+                  }
+                }}
                 className="w-full h-full object-cover object-center"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1B1E1C]/35 to-transparent pointer-events-none" />
