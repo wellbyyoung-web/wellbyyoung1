@@ -147,7 +147,6 @@ export default function App() {
           onOpenLinkSettings={() => setIsLinkConfigModalOpen(true)}
           onOpenInquiryList={() => setIsInquiryViewerOpen(true)}
           externalLinks={externalLinks}
-          inquiryCount={inquiries.length}
         />
       </main>
 
