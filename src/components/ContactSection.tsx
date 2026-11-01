@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ExternalLinks, Inquiry } from '../types';
-import { CheckCircle2, MessageSquare, ShoppingBag, BookOpen, Settings, AlertCircle, ArrowRight, Mail, Loader2, Copy, Check } from 'lucide-react';
+import { CheckCircle2, MessageSquare, ShoppingBag, BookOpen, Settings, AlertCircle, ArrowRight, Mail, Loader2, Copy, Check, RefreshCw, ExternalLink } from 'lucide-react';
 
 interface ContactSectionProps {
   onAddInquiry: (inquiry: Inquiry) => void;
@@ -31,6 +31,8 @@ export function ContactSection({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [emailStatus, setEmailStatus] = useState<'IDLE' | 'SENT' | 'NEEDS_ACTIVATION' | 'FALLBACK'>('IDLE');
+  const [isResending, setIsResending] = useState(false);
+  const [resendMessage, setResendMessage] = useState<string | null>(null);
 
   // Auto format phone number
   const handlePhoneChange = (val: string) => {
@@ -59,6 +61,42 @@ export function ContactSection({
     }
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2500);
+  };
+
+  // Re-send clean single activation request to FormSubmit
+  const handleResendActivation = async () => {
+    setIsResending(true);
+    setResendMessage(null);
+    try {
+      const response = await fetch('https://formsubmit.co/ajax/wellbyyoung@gmail.com', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          _subject: '[웰바이영] FormSubmit 이메일 연동 인증 요청 (최신 유효 링크)',
+          _captcha: 'false',
+          _template: 'table',
+          안내: '웰바이영 공식 이메일 연동 인증 메일입니다. 아래 [Activate Form] 링크를 1회 클릭해주시면 이후 모든 상담글이 정상 수신됩니다.',
+          발송일시: new Date().toLocaleString('ko-KR'),
+        }),
+      });
+
+      const resJson = await response.json().catch(() => ({}));
+      if (resJson?.message && (resJson.message.includes('Activation') || resJson.message.includes('activate'))) {
+        setResendMessage('새로운 인증 메일을 전송했습니다! Gmail(스팸함 포함)에서 방금 도착한 [가장 최신 메일]의 [Activate Form] 링크를 1회 클릭해 주세요.');
+      } else if (resJson?.success === 'true' || resJson?.success === true) {
+        setResendMessage('이미 인증이 정상 완료된 상태입니다! 이제 고객 상담글이 공식 메일함으로 바로 수신됩니다.');
+        setEmailStatus('SENT');
+      } else {
+        setResendMessage('새 인증 메일이 발송되었습니다. Gmail에서 가장 최근에 도착한 메일의 [Activate Form]을 클릭해 주세요.');
+      }
+    } catch {
+      setResendMessage('일시적인 네트워크 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+    } finally {
+      setIsResending(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -107,7 +145,7 @@ export function ContactSection({
 
     let dispatchedStatus: 'IDLE' | 'SENT' | 'NEEDS_ACTIVATION' | 'FALLBACK' = 'SENT';
 
-    // 1. Dispatch directly to wellbyyoung@gmail.com via FormSubmit AJAX API
+    // 1. Dispatch cleanly to wellbyyoung@gmail.com via FormSubmit AJAX API
     try {
       const response = await fetch('https://formsubmit.co/ajax/wellbyyoung@gmail.com', {
         method: 'POST',
@@ -142,51 +180,7 @@ export function ContactSection({
 
     setEmailStatus(dispatchedStatus);
 
-    // 2. Dual-dispatch via hidden form submit to ensure delivery without CORS issues
-    try {
-      const bgForm = document.createElement('form');
-      bgForm.action = 'https://formsubmit.co/wellbyyoung@gmail.com';
-      bgForm.method = 'POST';
-      bgForm.target = 'formsubmit_hidden_iframe';
-      bgForm.style.display = 'none';
-
-      const fields: Record<string, string> = {
-        _subject: `[웰바이영 상담 신청] ${name.trim()}님 (${programLabel})`,
-        _captcha: 'false',
-        _template: 'table',
-        성함: name.trim(),
-        연락처: phone.trim(),
-        신청프로그램: programLabel,
-        문의내용: message.trim() || '(내용 없음)',
-        접수번호: newInquiry.id,
-        접수일시: new Date().toLocaleString('ko-KR'),
-      };
-
-      for (const [key, val] of Object.entries(fields)) {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = val;
-        bgForm.appendChild(input);
-      }
-
-      let iframe = document.getElementById('formsubmit_hidden_iframe') as HTMLIFrameElement | null;
-      if (!iframe) {
-        iframe = document.createElement('iframe');
-        iframe.name = 'formsubmit_hidden_iframe';
-        iframe.id = 'formsubmit_hidden_iframe';
-        iframe.style.display = 'none';
-        document.body.appendChild(iframe);
-      }
-
-      document.body.appendChild(bgForm);
-      bgForm.submit();
-      setTimeout(() => bgForm.remove(), 2000);
-    } catch {
-      // safe fallback
-    }
-
-    // 3. Dispatch to Netlify Forms (if hosted on Netlify)
+    // 2. Dispatch to Netlify Forms (if hosted on Netlify)
     try {
       const netlifyFormData = new URLSearchParams();
       netlifyFormData.append('form-name', 'wellbyyoung-consultation');
@@ -299,14 +293,73 @@ export function ContactSection({
                 )}
 
                 {emailStatus === 'NEEDS_ACTIVATION' && (
-                  <div className="p-3.5 bg-amber-50/90 border border-amber-300 rounded text-xs text-amber-950 text-left flex items-start gap-2.5 max-w-md mx-auto">
-                    <AlertCircle className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
-                    <div>
-                      <div className="font-semibold text-amber-900">공식 메일함 최초 1회 승인 필요</div>
-                      <p className="text-[11px] text-amber-800 font-light mt-1 leading-relaxed">
-                        FormSubmit 시스템에서 <strong>wellbyyoung@gmail.com</strong>으로 보낸 인증 메일의 <strong>[Activate Form]</strong> 링크를 1회 클릭해 주시면, 이후 모든 상담글이 공식 메일함으로 바로 수신됩니다.
-                      </p>
+                  <div className="p-4 bg-amber-50/95 border border-amber-300 rounded text-xs text-amber-950 text-left space-y-3 max-w-md mx-auto">
+                    <div className="flex items-start gap-2.5">
+                      <AlertCircle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+                      <div>
+                        <div className="font-semibold text-amber-900 text-sm">공식 메일함 최초 1회 승인 필요</div>
+                        <p className="text-[11px] text-amber-800 font-light mt-0.5 leading-relaxed">
+                          FormSubmit 보안 정책상 <strong>wellbyyoung@gmail.com</strong>으로 발송된 메일의 <strong>[Activate Form]</strong> 링크를 1회 클릭하셔야 이메일 전달이 시작됩니다.
+                        </p>
+                      </div>
                     </div>
+
+                    {/* Troubleshoot "Confirmation token not found" */}
+                    <div className="p-3 bg-white/90 rounded border border-amber-200/80 text-[11px] space-y-1.5 text-stone-700">
+                      <div className="font-semibold text-amber-900 flex items-center gap-1.5">
+                        <span>💡 "Confirmation token not found" 에러 해결법</span>
+                      </div>
+                      <p className="leading-relaxed">
+                        여러 번 테스트하면서 이전 메일의 인증 링크가 만료되었을 때 나타납니다.
+                      </p>
+                      <ul className="list-disc list-inside space-y-1 text-stone-600 pl-0.5">
+                        <li>
+                          Gmail(스팸함 포함)에서 <strong>시간이 가장 최신인 마지막 메일</strong>의 [Activate Form] 링크를 클릭해 주세요.
+                        </li>
+                        <li>
+                          그래도 만료되었다면 아래 <strong>[새 인증 메일 발송하기]</strong> 버튼을 누른 뒤 방금 도착한 메일을 딱 1번만 클릭하시면 영구적으로 인증이 완료됩니다!
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div className="pt-0.5">
+                      <button
+                        type="button"
+                        onClick={handleResendActivation}
+                        disabled={isResending}
+                        className="w-full py-2 px-3 bg-amber-600 hover:bg-amber-700 disabled:bg-amber-400 text-white rounded text-xs font-medium transition-colors flex items-center justify-center gap-1.5 shadow-2xs"
+                      >
+                        {isResending ? (
+                          <>
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            <span>인증 메일 요청 중...</span>
+                          </>
+                        ) : (
+                          <>
+                            <RefreshCw className="w-3.5 h-3.5" />
+                            <span>새 인증 메일 발송하기 (최신 유효 링크 받기)</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    {resendMessage && (
+                      <div className="p-2.5 bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] rounded leading-relaxed">
+                        {resendMessage}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {emailStatus === 'FALLBACK' && (
+                  <div className="p-3.5 bg-amber-50/90 border border-amber-200 rounded text-xs text-amber-900 text-left space-y-1 max-w-md mx-auto">
+                    <div className="flex items-center gap-2 font-medium text-amber-900">
+                      <AlertCircle className="w-4 h-4 text-amber-700 shrink-0" />
+                      <span>상담 신청 내역 내부 저장 완료</span>
+                    </div>
+                    <p className="text-[11px] text-amber-800 font-light leading-relaxed">
+                      상담 신청서가 사이트 관리 시스템에 안전하게 저장되었습니다. 아래 [카카오톡으로 즉시 문의]를 누르시면 상담원에게 곧바로 연결됩니다.
+                    </p>
                   </div>
                 )}
 
@@ -317,14 +370,24 @@ export function ContactSection({
                     <span>상담 안내 및 확인 사항</span>
                   </div>
                   <p>
-                    · 문의 내역이 <strong>wellbyyoung@gmail.com</strong> 및 사이트 관리 시스템에 접수되었습니다.
+                    · 문의 내역이 <strong>wellbyyoung@gmail.com</strong> 및 사이트 관리 시스템에 정상 접수되었습니다.
                   </p>
                   <p>
-                    · 박혜영 대표가 접수 내용을 확인한 후 <strong>최대 7일 이내</strong>에 남겨주신 연락처로 안내해 드립니다.
+                    · 박혜영 대표가 접수 내용을 확인한 후 <strong>최대 7일 이내</strong>에 남겨주신 연락처로 개별 안내를 드립니다.
                   </p>
                 </div>
 
                 <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-2 pt-2">
+                  <a
+                    href={externalLinks.kakaoTalk}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto px-3.5 py-2 text-xs font-medium text-[#371D1E] bg-[#FEE500] hover:bg-[#FADA0A] transition-colors rounded-sm tracking-wider flex items-center justify-center gap-1.5 shadow-2xs"
+                  >
+                    <MessageSquare className="w-3.5 h-3.5" />
+                    <span>카카오톡으로 즉시 문의</span>
+                  </a>
+
                   <a
                     href={`mailto:wellbyyoung@gmail.com?subject=${encodeURIComponent(`[웰바이영 상담 신청] ${submittedInquiry.name}님 (${submittedInquiry.id})`)}&body=${encodeURIComponent(`[웰바이영 상담 신청]\n\n· 성함: ${submittedInquiry.name}\n· 연락처: ${submittedInquiry.phone}\n· 접수 번호: ${submittedInquiry.id}\n· 신청 프로그램: ${submittedInquiry.program === 'ON_SOLUTION' ? '온솔루션' : submittedInquiry.program === 'YOU_SOLUTION' ? '유솔루션' : '일반 문의'}\n\n· 문의 내용:\n${submittedInquiry.message || '(내용 없음)'}\n\n웰바이영 공식 수신처: wellbyyoung@gmail.com`)}`}
                     className="w-full sm:w-auto px-3.5 py-2 text-xs font-medium text-[#4E6351] bg-[#E8ECE8] hover:bg-[#D3DDD3] transition-colors rounded-sm tracking-wider flex items-center justify-center gap-1.5"
