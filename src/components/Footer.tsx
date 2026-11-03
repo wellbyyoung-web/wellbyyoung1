@@ -1,4 +1,5 @@
 import { ArrowUp } from 'lucide-react';
+import { BRAND_ASSETS } from '../data/brandContent';
 
 interface FooterProps {
   onOpenPrivacyModal: () => void;
@@ -28,10 +29,17 @@ export function Footer({
         {/* Top Footer Split */}
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-8 pb-12 border-b border-[#E3DED4]">
           {/* Brand Column */}
-          <div className="space-y-2">
-            <div className="font-serif-brand text-2xl tracking-[0.2em] uppercase text-[#1B1E1C] font-semibold">
-              WELL BY YOUNG
-            </div>
+          <div className="space-y-3">
+            <img
+              src={BRAND_ASSETS.logoImage}
+              alt="웰바이영 건강상담소"
+              className="h-8 sm:h-9 w-auto object-contain mix-blend-multiply opacity-90"
+              onError={(e) => {
+                if (e.currentTarget.src !== window.location.origin + BRAND_ASSETS.logoFallback) {
+                  e.currentTarget.src = BRAND_ASSETS.logoFallback;
+                }
+              }}
+            />
             <div className="text-xs tracking-widest uppercase font-serif-brand text-[#627A65] font-medium">
               Personal Health Designer
             </div>

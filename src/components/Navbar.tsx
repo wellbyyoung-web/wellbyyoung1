@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
+import { BRAND_ASSETS } from '../data/brandContent';
 
 interface NavbarProps {
   onOpenInquiryList?: () => void;
@@ -40,17 +41,27 @@ export function Navbar({ onOpenInquiryList, onOpenLinkSettings }: NavbarProps) {
       <header
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
           isScrolled
-            ? 'bg-[#FAF8F5]/95 backdrop-blur-md border-b border-[#E3DED4]/60 py-3.5 shadow-[0_2px_12px_rgba(0,0,0,0.03)]'
-            : 'bg-[#FAF8F5]/80 backdrop-blur-sm py-5'
+            ? 'bg-[#FAF8F5]/95 backdrop-blur-md border-b border-[#E3DED4]/60 py-2.5 sm:py-3 shadow-[0_2px_12px_rgba(0,0,0,0.03)]'
+            : 'bg-[#FAF8F5]/85 backdrop-blur-sm py-3.5 sm:py-4'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 flex items-center justify-between gap-8">
-          {/* Zone 1: Single element Brand Wordmark */}
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 flex items-center justify-between gap-6">
+          {/* Zone 1: Official Brand Logo & Wordmark */}
           <a
             href="#"
-            className="font-serif-brand text-xl sm:text-2xl tracking-[0.18em] uppercase text-[#1B1E1C] font-semibold whitespace-nowrap shrink-0 hover:opacity-85 transition-opacity"
+            className="flex items-center gap-3 hover:opacity-85 transition-opacity shrink-0 py-0.5 group"
+            aria-label="웰바이영 건강상담소 홈으로 이동"
           >
-            WELL BY YOUNG
+            <img
+              src={BRAND_ASSETS.logoImage}
+              alt="웰바이영 건강상담소"
+              className="h-8 sm:h-9 md:h-10 w-auto object-contain mix-blend-multiply transition-transform duration-300 group-hover:scale-[1.02]"
+              onError={(e) => {
+                if (e.currentTarget.src !== window.location.origin + BRAND_ASSETS.logoFallback) {
+                  e.currentTarget.src = BRAND_ASSETS.logoFallback;
+                }
+              }}
+            />
           </a>
 
           {/* Zone 2: 4-5 single-line clean text nav links */}
@@ -102,9 +113,18 @@ export function Navbar({ onOpenInquiryList, onOpenLinkSettings }: NavbarProps) {
           >
             <div>
               <div className="flex items-center justify-between pb-5 border-b border-[#E3DED4]">
-                <div className="font-serif-brand tracking-[0.15em] text-lg text-[#1B1E1C] font-semibold">
-                  WELL BY YOUNG
-                </div>
+                <a href="#" onClick={() => setMobileMenuOpen(false)} className="block">
+                  <img
+                    src={BRAND_ASSETS.logoImage}
+                    alt="웰바이영 건강상담소"
+                    className="h-8 w-auto object-contain mix-blend-multiply"
+                    onError={(e) => {
+                      if (e.currentTarget.src !== window.location.origin + BRAND_ASSETS.logoFallback) {
+                        e.currentTarget.src = BRAND_ASSETS.logoFallback;
+                      }
+                    }}
+                  />
+                </a>
                 <button
                   type="button"
                   onClick={() => setMobileMenuOpen(false)}

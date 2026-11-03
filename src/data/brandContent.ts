@@ -3,13 +3,16 @@ import heroImg from '../assets/images/hero_wellness_morning_1793329839201.jpg';
 import vitalogyImg from '../assets/images/vitalogy_lifestyle_1793329839524.jpg';
 import programImg from '../assets/images/program_aromatherapy_1793329839630.jpg';
 import founderImg from '../assets/images/founder_park_hyeyoung.png';
+import logoImg from '../assets/images/logo_wellbyyoung.png';
 
 export const BRAND_ASSETS = {
+  logoImage: logoImg || '/images/logo_wellbyyoung.png',
   heroImage: heroImg || '/images/hero_wellness_morning.jpg',
   vitalogyImage: vitalogyImg || '/images/vitalogy_lifestyle.jpg',
   programImage: programImg || '/images/program_aromatherapy.jpg',
   founderImage: founderImg || '/images/founder_park_hyeyoung.png',
   // Static public fallbacks
+  logoFallback: '/assets/aistudio/file_000000001da881fa89010eb997636a74_bca8ef2a.png',
   heroFallback: '/images/hero_wellness_morning.jpg',
   vitalogyFallback: '/images/vitalogy_lifestyle.jpg',
   programFallback: '/images/program_aromatherapy.jpg',
