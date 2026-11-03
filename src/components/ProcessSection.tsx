@@ -53,7 +53,7 @@ export function ProcessSection() {
 
         <div className="mt-12 text-center">
           <p className="text-xs text-[#767E77] font-light">
-            * 각 단계는 신청자의 일정과 희망 방식(온라인 비대면 / 1:1 상담)에 맞춰 순차적으로 진행됩니다.
+            * 각 단계는 신청자의 일정과 선택하신 프로그램(온 프로그램: 온라인·오프라인 대면 / 유 프로그램: 오프라인 1:1 대면 전용)에 맞춰 순차적으로 진행됩니다.
           </p>
         </div>
       </div>

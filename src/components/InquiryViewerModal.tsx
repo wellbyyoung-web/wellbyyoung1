@@ -74,9 +74,9 @@ export function InquiryViewerModal({
             inquiries.map((inq) => {
               const programName =
                 inq.program === 'ON_SOLUTION'
-                  ? '온솔루션'
+                  ? '온 프로그램'
                   : inq.program === 'YOU_SOLUTION'
-                  ? '유솔루션'
+                  ? '유 프로그램'
                   : '일반 문의';
 
               return (

@@ -22,9 +22,18 @@ export default function App() {
       const saved = localStorage.getItem('wellbyyoung_links');
       if (saved) {
         const parsed = JSON.parse(saved);
+        let changed = false;
         // Seamlessly migrate to official blog if previous or empty
         if (!parsed.naverBlog || parsed.naverBlog.includes('wellbyyoung') || parsed.naverBlog.includes('wandokong_lab')) {
           parsed.naverBlog = 'https://blog.naver.com/wellby0';
+          changed = true;
+        }
+        // Seamlessly migrate to official Kakao channel if previous or empty
+        if (!parsed.kakaoTalk || parsed.kakaoTalk.includes('wellbyyoung') || parsed.kakaoTalk !== 'http://pf.kakao.com/_eJIxnX') {
+          parsed.kakaoTalk = 'http://pf.kakao.com/_eJIxnX';
+          changed = true;
+        }
+        if (changed) {
           localStorage.setItem('wellbyyoung_links', JSON.stringify(parsed));
         }
         return parsed;

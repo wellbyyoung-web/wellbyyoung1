@@ -57,6 +57,22 @@ export function ProgramDetailModal({
 
         {/* Modal Body */}
         <div className="py-5 space-y-6 max-h-[60vh] overflow-y-auto pr-1">
+          {/* Consultation Specifications: Method, Duration */}
+          <div className="p-4 bg-[#F7F5F0] rounded-sm border border-[#E3DED4] grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <span className="text-[11px] text-[#767E77] block font-medium">상담 방식</span>
+              <span className="text-xs sm:text-sm font-semibold text-[#1B1E1C] mt-0.5 block">
+                {program.method}
+              </span>
+            </div>
+            <div>
+              <span className="text-[11px] text-[#767E77] block font-medium">상담 시간</span>
+              <span className="text-xs sm:text-sm font-semibold text-[#1B1E1C] mt-0.5 block">
+                {program.duration}
+              </span>
+            </div>
+          </div>
+
           {/* Detailed Intro */}
           <div>
             <h4 className="text-xs font-semibold uppercase tracking-wider text-[#767E77] mb-2 font-serif-brand">
@@ -65,12 +81,17 @@ export function ProgramDetailModal({
             <p className="text-xs sm:text-sm text-[#3F4440] leading-relaxed">
               {program.details}
             </p>
+            {program.subDescription && (
+              <div className="mt-3 p-3 bg-[#E8ECE8]/60 rounded border border-[#D3DDD3] text-xs text-[#4E6351] leading-relaxed font-normal">
+                {program.subDescription}
+              </div>
+            )}
           </div>
 
-          {/* Key Components */}
-          <div className="p-4 bg-[#F7F5F0] rounded-sm border border-[#E3DED4]">
-            <h4 className="text-xs font-semibold text-[#1B1E1C] mb-3 flex items-center gap-1.5">
-              <span>주요 구성 프로그램</span>
+          {/* Key Components: 주요 상담 내용 */}
+          <div className="p-4 bg-[#FAF8F5] rounded-sm border border-[#E3DED4]">
+            <h4 className="text-xs font-semibold text-[#1B1E1C] mb-3 flex items-center gap-1.5 uppercase font-serif-brand tracking-wider">
+              <span>주요 상담 내용</span>
             </h4>
             <ul className="space-y-2">
               {program.keyComponents.map((item, idx) => (
@@ -124,7 +145,7 @@ export function ProgramDetailModal({
             <ShieldCheck className="w-4 h-4 text-[#8FA68F] shrink-0 mt-0.5" />
             <div>
               <strong className="text-[#59605A] font-medium block">안내사항</strong>
-              본 프로그램은 질병의 진단, 치료, 예방 등 의료행위가 아닌 일상 생활습관과 영양 균형을 돕는 웰니스 케어 서비스입니다.
+              본 맞춤 건강상담은 의료진의 진료 및 치료를 대체하지 않는 비의료 건강관리 서비스입니다. 질병의 진단, 치료, 처방, 완치 또는 증상 개선을 보장하지 않습니다.
             </div>
           </div>
         </div>

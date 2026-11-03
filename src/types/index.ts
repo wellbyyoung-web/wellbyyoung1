@@ -26,6 +26,10 @@ export interface ProgramInfo {
   subtitle: string;
   badge: string;
   description: string;
+  subDescription?: string;
+  method: string;
+  duration: string;
+  price?: string;
   targetAudience: string[];
   keyComponents: string[];
   process: string[];

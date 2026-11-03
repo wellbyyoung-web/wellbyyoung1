@@ -92,7 +92,7 @@ export function Footer({
                     onClick={() => scrollTo('#programs')}
                     className="hover:text-[#1B1E1C] transition-colors"
                   >
-                    온솔루션 (ON SOLUTION)
+                    온 프로그램 (ON PROGRAM)
                   </button>
                 </li>
                 <li>
@@ -100,7 +100,7 @@ export function Footer({
                     onClick={() => scrollTo('#programs')}
                     className="hover:text-[#1B1E1C] transition-colors"
                   >
-                    유솔루션 (YOU SOLUTION)
+                    유 프로그램 (YOU PROGRAM)
                   </button>
                 </li>
                 <li>

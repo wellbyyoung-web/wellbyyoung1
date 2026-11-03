@@ -69,10 +69,33 @@ export function ProgramsSection({
                   {prog.description}
                 </p>
 
-                {/* Key Components */}
+                {/* Specialized Note for YOU PROGRAM: Disease/treatment co-care */}
+                {prog.subDescription && (
+                  <p className="mt-2.5 text-xs text-[#627A65] leading-relaxed bg-[#E8ECE8]/60 p-3 rounded border border-[#D3DDD3]/80 font-light">
+                    {prog.subDescription}
+                  </p>
+                )}
+
+                {/* Consultation Details: Method, Duration */}
+                <div className="mt-6 p-4 bg-[#F7F5F0] rounded border border-[#E3DED4] space-y-2.5">
+                  <div className="flex items-center justify-between text-xs pb-2 border-b border-[#E3DED4]/60">
+                    <span className="text-[#767E77] font-medium">상담 방식</span>
+                    <span className="text-[#1B1E1C] font-semibold text-right">
+                      {prog.method}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-[#767E77] font-medium">상담 시간</span>
+                    <span className="text-[#1B1E1C] font-semibold text-right">
+                      {prog.duration}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Key Components: 주요 상담 내용 */}
                 <div className="mt-6 pt-5 border-t border-[#E3DED4]/70">
-                  <div className="text-xs font-medium uppercase tracking-wider text-[#767E77] mb-3 font-serif-brand">
-                    주요 구성
+                  <div className="text-xs font-semibold tracking-wider text-[#767E77] mb-3 font-serif-brand uppercase">
+                    주요 상담 내용
                   </div>
                   <ul className="space-y-2">
                     {prog.keyComponents.map((item, idx) => (
@@ -88,13 +111,25 @@ export function ProgramsSection({
               </div>
 
               {/* Action Area */}
-              <div className="mt-8 pt-6 border-t border-[#E3DED4] flex items-center justify-between gap-3">
+              <div className="mt-8 pt-6 border-t border-[#E3DED4] flex items-center gap-3">
                 <button
                   onClick={() => setSelectedProgram(prog)}
-                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-medium text-[#2C302D] bg-[#EFECE5] hover:bg-[#E3DED4] active:bg-[#D8D4C8] transition-colors rounded-sm tracking-wider"
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs sm:text-sm font-medium text-[#2C302D] bg-[#EFECE5] hover:bg-[#E3DED4] active:bg-[#D8D4C8] transition-colors rounded-sm tracking-wider"
                 >
-                  <span>{prog.title} 자세히 보기</span>
+                  <span>상세 안내</span>
                   <ArrowUpRight className="w-4 h-4 text-[#59605A]" />
+                </button>
+                <button
+                  onClick={() => {
+                    onSelectProgramForConsultation(prog.id);
+                    const contactEl = document.querySelector('#contact');
+                    if (contactEl) {
+                      contactEl.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs sm:text-sm font-medium text-[#FAF8F5] bg-[#2C302D] hover:bg-[#1B1E1C] active:bg-[#111312] transition-colors rounded-sm tracking-wider"
+                >
+                  <span>상담 신청</span>
                 </button>
               </div>
             </div>
@@ -127,11 +162,11 @@ export function ProgramsSection({
               웰바이영이 약속하는 비의료적 건강 생활 가이드
             </h4>
             <p className="text-xs sm:text-sm text-[#59605A] leading-relaxed font-light">
-              웰바이영의 온유(ON YOU) 프로그램은 질병의 진단, 치료, 처방, 완치 등 의료 행위를 대신하지 않습니다. 영양학적 과학 기준과 자연 이완 요법을 통해 개인이 자신의 몸을 바르게 돌보는 자생적 습관을 가꾸도록 돕습니다.
+              웰바이영의 맞춤 건강상담은 의료진의 진료 및 치료를 대체하지 않는 비의료 건강관리 서비스입니다. 질병의 진단, 치료, 처방, 완치 또는 증상 개선을 보장하지 않으며, 영양관리와 자연적 보완요법을 통해 일상에서 실천할 수 있는 건강한 생활습관의 방향을 함께 설계합니다.
             </p>
             <div className="pt-2 flex flex-wrap gap-4 text-xs text-[#767E77]">
               <span>· 투명한 상담 안내</span>
-              <span>· 네이버 스마트스토어 결제 연동</span>
+              <span>· 네이버 스마트스토어 연동</span>
               <span>· 1:1 맞춤형 피드백</span>
             </div>
           </div>

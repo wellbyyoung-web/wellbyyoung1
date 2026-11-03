@@ -50,9 +50,9 @@ export function ContactSection({
     if (!submittedInquiry) return;
     const progLabel =
       submittedInquiry.program === 'ON_SOLUTION'
-        ? '온솔루션 (ON SOLUTION)'
+        ? '온 프로그램 (ON PROGRAM)'
         : submittedInquiry.program === 'YOU_SOLUTION'
-        ? '유솔루션 (YOU SOLUTION)'
+        ? '유 프로그램 (YOU PROGRAM)'
         : '일반 문의';
     const textToCopy = `[웰바이영 상담 신청 내역]\n· 접수번호: ${submittedInquiry.id}\n· 성함: ${submittedInquiry.name}\n· 연락처: ${submittedInquiry.phone}\n· 신청 프로그램: ${progLabel}\n· 문의 내용: ${submittedInquiry.message || '(내용 없음)'}\n· 공식 수신처: wellbyyoung@gmail.com`;
     
@@ -263,9 +263,9 @@ export function ContactSection({
                     <span className="text-[#767E77]">신청 프로그램:</span>
                     <span className="font-medium text-[#4E6351]">
                       {submittedInquiry.program === 'ON_SOLUTION'
-                        ? '온솔루션 (ON SOLUTION)'
+                        ? '온 프로그램 (ON PROGRAM)'
                         : submittedInquiry.program === 'YOU_SOLUTION'
-                        ? '유솔루션 (YOU SOLUTION)'
+                        ? '유 프로그램 (YOU PROGRAM)'
                         : '일반 문의'}
                     </span>
                   </div>
@@ -492,8 +492,8 @@ export function ContactSection({
                       }`}
                     >
                       <div className="font-serif-brand font-semibold text-[11px] text-[#627A65]">01</div>
-                      <div className="text-xs font-medium">온솔루션</div>
-                      <div className="text-[10px] text-[#767E77] truncate">온라인 휴식설계</div>
+                      <div className="text-xs font-medium">온 프로그램</div>
+                      <div className="text-[10px] text-[#767E77] truncate">온·오프라인 대면</div>
                     </button>
 
                     <button
@@ -506,8 +506,8 @@ export function ContactSection({
                       }`}
                     >
                       <div className="font-serif-brand font-semibold text-[11px] text-[#627A65]">02</div>
-                      <div className="text-xs font-medium">유솔루션</div>
-                      <div className="text-[10px] text-[#767E77] truncate">1:1 집중 맞춤관리</div>
+                      <div className="text-xs font-medium">유 프로그램</div>
+                      <div className="text-[10px] text-[#767E77] truncate">오프라인 대면 전용</div>
                     </button>
 
                     <button
