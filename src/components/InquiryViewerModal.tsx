@@ -77,7 +77,7 @@ export function InquiryViewerModal({
                   ? '온 프로그램'
                   : inq.program === 'YOU_SOLUTION'
                   ? '유 프로그램'
-                  : '일반 문의';
+                  : '강의·단체 협업';
 
               return (
                 <div

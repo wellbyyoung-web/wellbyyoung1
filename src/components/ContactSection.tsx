@@ -53,7 +53,7 @@ export function ContactSection({
         ? '온 프로그램 (ON PROGRAM)'
         : submittedInquiry.program === 'YOU_SOLUTION'
         ? '유 프로그램 (YOU PROGRAM)'
-        : '일반 문의';
+        : '기업·기관·단체 강의 및 협업 문의';
     const textToCopy = `[웰바이영 상담 신청 내역]\n· 접수번호: ${submittedInquiry.id}\n· 성함: ${submittedInquiry.name}\n· 연락처: ${submittedInquiry.phone}\n· 신청 프로그램: ${progLabel}\n· 문의 내용: ${submittedInquiry.message || '(내용 없음)'}\n· 공식 수신처: wellbyyoung@gmail.com`;
     
     if (navigator.clipboard) {
@@ -123,10 +123,10 @@ export function ContactSection({
 
     const programLabel =
       program === 'ON_SOLUTION'
-        ? '온솔루션 (ON SOLUTION)'
+        ? '온 프로그램 (ON PROGRAM)'
         : program === 'YOU_SOLUTION'
-        ? '유솔루션 (YOU SOLUTION)'
-        : '일반 문의';
+        ? '유 프로그램 (YOU PROGRAM)'
+        : '기업·기관·단체 강의 및 협업 문의';
 
     const randomSuffix = Math.floor(1000 + Math.random() * 9000);
     const newInquiry: Inquiry = {
@@ -266,7 +266,7 @@ export function ContactSection({
                         ? '온 프로그램 (ON PROGRAM)'
                         : submittedInquiry.program === 'YOU_SOLUTION'
                         ? '유 프로그램 (YOU PROGRAM)'
-                        : '일반 문의'}
+                        : '기업·기관·단체 강의 및 협업 문의'}
                     </span>
                   </div>
                   {submittedInquiry.message && (
@@ -432,10 +432,10 @@ export function ContactSection({
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="border-b border-[#E3DED4] pb-4">
                   <h3 className="text-lg font-medium text-[#1B1E1C]">
-                    온라인 상담 신청
+                    상담 및 강의·협업 신청
                   </h3>
                   <p className="text-xs text-[#767E77] font-light mt-0.5">
-                    궁금하신 프로그램과 일상 고민을 남겨주시면 맞춤형 안내를 도와드립니다.
+                    개인 맞춤 건강상담 또는 기업·기관·단체 건강 강의 및 협업 문의를 남겨주세요.
                   </p>
                 </div>
 
@@ -448,7 +448,7 @@ export function ContactSection({
 
                 <div>
                   <label htmlFor="name-input" className="block text-xs font-medium text-[#2C302D] mb-1.5">
-                    이름 (성함) <span className="text-[#627A65]">*</span>
+                    이름 (성함 / 담당자명) <span className="text-[#627A65]">*</span>
                   </label>
                   <input
                     id="name-input"
@@ -479,7 +479,7 @@ export function ContactSection({
 
                 <div>
                   <label className="block text-xs font-medium text-[#2C302D] mb-1.5">
-                    관심 프로그램 선택 <span className="text-[#627A65]">*</span>
+                    관심 프로그램 및 문의 유형 선택 <span className="text-[#627A65]">*</span>
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <button
@@ -520,8 +520,8 @@ export function ContactSection({
                       }`}
                     >
                       <div className="font-serif-brand font-semibold text-[11px] text-[#627A65]">03</div>
-                      <div className="text-xs font-medium">기타 상담</div>
-                      <div className="text-[10px] text-[#767E77] truncate">일반 프로그램 문의</div>
+                      <div className="text-xs font-medium">강의 및 협업</div>
+                      <div className="text-[10px] text-[#767E77] truncate">기업·기관·단체 문의</div>
                     </button>
                   </div>
                 </div>
@@ -535,7 +535,7 @@ export function ContactSection({
                     rows={4}
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    placeholder="현재 식습관, 피로도, 일상에서 느끼는 불편 사항 등을 편안하게 남겨주세요."
+                    placeholder="개인 건강상담 고민 또는 기업/기관/단체 건강 강의·워크숍 협업 요청 사항을 편안하게 남겨주세요."
                     className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-[#FAF8F5] border border-[#E3DED4] rounded-sm focus:border-[#4E6351] focus:outline-none transition-colors"
                   />
                 </div>
