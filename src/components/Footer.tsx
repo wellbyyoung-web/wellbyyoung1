@@ -166,17 +166,24 @@ export function Footer({
 
         {/* Legal & Business Notices */}
         <div className="py-8 space-y-3 font-light text-[#767E77] leading-relaxed border-b border-[#E3DED4]/60">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs">
             <div>
-              <span className="font-medium text-[#59605A]">상호명:</span> 웰바이영 (WELL BY YOUNG)
-              <span className="mx-2">·</span>
-              <span className="font-medium text-[#59605A]">대표자:</span> 박혜영
-              <span className="mx-2">·</span>
-              <span className="font-medium text-[#59605A]">사업자등록번호:</span> 등록 준비 중 (사업자 정보 등록 예정)
+              <span className="font-medium text-[#59605A]">상호:</span> 웰바이영 건강상담소
             </div>
+            <span className="text-[#D3DDD3] hidden sm:inline">|</span>
             <div>
-              <span className="font-medium text-[#59605A]">사업장 주소:</span> 추후 공지 예정
-              <span className="mx-2">·</span>
+              <span className="font-medium text-[#59605A]">대표자:</span> 박혜영
+            </div>
+            <span className="text-[#D3DDD3] hidden sm:inline">|</span>
+            <div>
+              <span className="font-medium text-[#59605A]">사업자등록번호:</span> 770-49-01320
+            </div>
+            <span className="text-[#D3DDD3] hidden sm:inline">|</span>
+            <div>
+              <span className="font-medium text-[#59605A]">사업장 소재지:</span> 충청북도 청주시 흥덕구 풍년로 56
+            </div>
+            <span className="text-[#D3DDD3] hidden sm:inline">|</span>
+            <div>
               <span className="font-medium text-[#59605A]">고객문의:</span>{' '}
               <a href="mailto:wellbyyoung@gmail.com" className="hover:text-[#1B1E1C] underline font-medium text-[#4E6351]">
                 wellbyyoung@gmail.com
@@ -186,7 +193,7 @@ export function Footer({
 
           <div className="p-3 bg-[#F7F5F0] rounded border border-[#E3DED4]/70 text-[11px] text-[#767E77] leading-relaxed">
             <strong className="text-[#59605A] font-medium block">웰바이영 서비스 유의사항</strong>
-            웰바이영의 모든 프로그램(온솔루션, 유솔루션)은 의료기관의 질병 진단, 치료, 예방 또는 의학적 처방을 대신하지 않습니다. 본 서비스는 개인의 식습관, 운동, 수면, 휴식 등 일상 생활습관을 스스로 바로잡도록 돕는 웰니스 케어 코칭 및 영양 설계 디자인 서비스입니다.
+            웰바이영의 모든 프로그램(온 프로그램, 유 프로그램)은 의료기관의 질병 진단, 치료, 예방 또는 의학적 처방을 대신하지 않습니다. 본 서비스는 개인의 식습관, 운동, 수면, 휴식 등 일상 생활습관을 스스로 바로잡도록 돕는 웰니스 케어 코칭 및 영양 설계 디자인 서비스입니다.
           </div>
         </div>
 
